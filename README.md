@@ -1,28 +1,27 @@
-#2048 in Idris
+# 2048 in Idris
 This project ports the game [2048](http://gabrielecirulli.github.io/2048/) to the dependently typed programming language [Idris](http://www.idris-lang.org/).  Dependently typed languages are interesting because they allow the type system to express much stronger constraints than other languages.  Idris appealed to me because of its emphasis on general purpose programming (as opposed to automated theorem proving) and its Haskell based syntax.  I made this project to learn Idris - 2048 is a good level of complexity for learning the basics of language - and I hope it can help other people who are learning Idris.
 
 This project will be much easier to understand if you are familiar with Haskell.
-##Compiling and Running
+
+### Compiling and Running
 After installing Idris and cloning this repo, you can type in the console (instructions for OSX)
 ```bash
-idris game.idr -o game -p effects
+$ idris game.idr -o game -p effects
 ```
 This compiles the file game.idr, to the executable file game.  The flag -p effects instructs the compiler
 to user the Effect library, which is needed for IO, exceptions, and random number generation.
 
 To play the game, type
 ```bash
-./game
+$ ./game
 ```
 
-The keys are a, s, d, and w for moving, and x for quit.  Currently, there is no code
+The keys are `a`, `s`, `d`, and `w` for moving, and `x` for quit.  Currently, there is no code
 to detect winning or losing the game, and the UI is somewhat quirky, but it is good
 enough to see that the basic logic of the game is working.
 
-##Discussion
-This section discusses the code, with emphasis on the effects of the dependent type system.
 
-###The Main Row-wise Operation
+### The Main Row-wise Operation
 The main operation in 2048 is pushing tiles in a direction.  If we consider a single row of tiles, the move takes a row, e.g.
 <table>
     <tr>
@@ -71,7 +70,7 @@ fillInList c l = if length l < 4 then
   else
   	take 4 l
 ```
-###Implementing the filIn Function in Idris
+### Implementing the filIn Function in Idris
 Idris has types, like Vect n a, which represents a vector of length n and with elements of type a.  It also has types that represent assertions, or propositions.  The type LTE m n represents the proposition that m is less than n.  It is non-empty exactly when m <= n.  An element of LTE m n can be thought of as a witness, or proof, that m <= n.  The fill in function in Idris is given by
 ```
 fillIn : LTE n m -> a -> Vect n a -> Vect m a
@@ -111,7 +110,7 @@ Main.fillIn is Total
 
 It's worth noting some other things.  Some variables can be left out entirely, like the first argument to replicate.  This is because the compiler can infer that this must be n.  n is not actually an argument to the function, but it is an implicit argument, which we will see more of later.
 
-###Implementing the Other Functions
+### Implementing the Other Functions
 Now that we have the fillIn function, we can work backwards and construct the filterMaybes and collapsePairs functions.  The filterMaybes function looks like this:
 ```
 filterMaybes : Vect n (Maybe a) -> (m ** (Vect m a, LTE m n))
@@ -149,4 +148,6 @@ basicRowOperation xs = let (m ** (ys, w)) = filterMaybes xs in let
 
 As before, the compiler/interpreter knows that the function basicRowOperation is total.  This is a cool property, because the function is proven to be total even though we didn't define the extra cases like in fillInList.
 
-...to be continued...
+### Screenshots
+
+![console ui](game.png)

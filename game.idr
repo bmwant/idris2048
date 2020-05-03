@@ -11,7 +11,7 @@ import Data.Vect
 -- Operations on individual rows
 --------------------------------------------------------------------------------
 
-||| Fills in an array 
+||| Fills in an array
 fillIn : LTE n m -> a -> Vect n a -> Vect m a
 fillIn LTEZero c []            = replicate _ c
 fillIn (LTESucc w) c (x :: xs) = x :: (fillIn w c xs)
@@ -37,7 +37,7 @@ filterMaybes (Nothing :: xs) = let (_ ** (ys, w)) = filterMaybes xs in
 ||| are equal, combines them into a single element with double the value.
 ||| Returns a vector of length m and proof that m <= n.
 collapsePairs : (Num a, Eq a) => Vect n a -> (m ** (Vect m a, LTE m n))
-collapsePairs (x::x'::xs) = 
+collapsePairs (x::x'::xs) =
   if x == x' then
     let (_ ** (ys, w)) = collapsePairs xs in (_ ** ((2 * x) :: ys, lteSuccRight (LTESucc w)))
   else
@@ -121,8 +121,12 @@ move Right xs = map (reverse . basicRowOperation . reverse) xs
 move Up    xs = (transposeArray . (move Left) . transposeArray) xs
 move Down  xs = (transposeArray . (move Right) . transposeArray) xs
 
+
+-- myIndex : List (Fin 16) -> Maybe Nat
+-- myIndex lst =
 addRandomPiece : Board -> {[RND, EXCEPTION String]} Eff Board
-addRandomPiece arr = case !(rndSelect indices) of
+addRandomPiece arr = 
+  case integerToFin 3 16 of
     Nothing => raise "Game Over"
     Just idx => pure (unFlattenArray (replaceAt idx (Just 2) flattened))
   where
