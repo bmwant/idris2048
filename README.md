@@ -151,3 +151,4 @@ As before, the compiler/interpreter knows that the function basicRowOperation is
 ### Screenshots
 
 ![console ui](game.png)
+![visual ui](gameui.png)
